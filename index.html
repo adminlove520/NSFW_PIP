@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>随机小姐姐视频-画中画版</title>
+    <title>随机小姐姐视频(画中画版)</title>
     <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNTYiIGhlaWdodD0iMjU2IiB2aWV3Qm94PSIwIDAgMjU2IDI1NiI+PHBhdGggZmlsbD0iY3VycmVudENvbG9yIiBkPSJNNzIgMTQ0SDMyYTggOCAwIDAgMSAwLTE2aDM1LjcybDEzLjYyLTIwLjQ0YTggOCAwIDAgMSAxMy4zMiAwbDI1LjM0IDM4bDkuMzQtMTRhOCA4IDAgMCAxIDYuNjQtMy41Nmg0YTggOCAwIDAgMSAwIDE2aC0xOS43MmwtMTMuNjIgMjAuNDRhOCA4IDAgMCAxLTEzLjMyIDBMODggMTI2LjQybC05LjM0IDE0QTggOCAwIDAgMSA3MiAxNDRNMTc4IDQwYy0yMC42NSAwLTM4LjczIDguODgtNTAgMjMuODlDMTE2LjczIDQ4Ljg4IDk4LjY1IDQwIDc4IDQwYTYyLjA3IDYyLjA3IDAgMCAwLTYyIDYydjIuMjVhOCA4IDAgMCAwIDE2LS41VjEwMmE0Ni4wNiA0Ni4wNiAwIDAgMSA0Ni00NmMxOS40NSAwIDM1Ljc4IDEwLjM2IDQyLjYgMjdhOCA4IDAgMCAwIDE0LjggMGM2LjgyLTE2LjY3IDIzLjE1LTI3IDQyLjYtMjdhNDYuMDYgNDYuMDYgMCAwIDEgNDYgNDZjMCA1My42MS03Ny43NiAxMDIuMTUtOTYgMTEyLjhjLTEwLjgzLTYuMzEtNDIuNjMtMjYtNjYuNjgtNTIuMjFhOCA4IDAgMSAwLTExLjggMTAuODJjMzEuMTcgMzQgNzIuOTMgNTYuNjggNzQuNjkgNTcuNjNhOCA4IDAgMCAwIDcuNTggMEMxMzYuMjEgMjI4LjY2IDI0MCAxNzIgMjQwIDEwMmE2Mi4wNyA2Mi4wNyAwIDAgMC02Mi02MiI+PC9wYXRoPjwvc3ZnPg==" type="image/svg+xml">
     <style>
         * {
@@ -32,12 +32,11 @@
             flex-direction: row;
             align-items: center;
             justify-content: center;
-            width: 100vw;
-            height: 80vh;
+            width: 100%;
+            max-width: 1200px;
             gap: 30px;
-            position: absolute;
-            top: 0;
-            left: 0;
+            transform: translateY(-15px);
+            position: relative;
             z-index: 10;
         }
         
@@ -46,13 +45,10 @@
             overflow: hidden;
             border-radius: 12px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            background: rgba(0,0,0,0.5); /* 半透明黑色 */
+            background: #000;
             transition: all 0.3s ease;
             width: 518px;
             height: 920px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
         .video-wrapper {
