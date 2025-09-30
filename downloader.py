@@ -487,7 +487,12 @@ def main():
     # 处理日期子目录
     output_dir = args.output
     if args.date_subdir:
-        date_str = datetime.now(UTC).strftime("%Y%m%d")
+        # 优先使用环境变量中的日期（GitHub Actions使用）
+        import os
+        date_str = os.environ.get('CURRENT_DATE')
+        if not date_str:
+            # 本地运行时使用当前UTC时间
+            date_str = datetime.now(UTC).strftime("%Y%m%d")
         output_dir = os.path.join(output_dir, f"雅俗共赏_{date_str}")
     
     try:

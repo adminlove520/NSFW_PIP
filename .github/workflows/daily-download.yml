@@ -52,6 +52,10 @@ jobs:
           DOWNLOAD_COUNT=${{ github.event.inputs.download_count || '10' }}
           
           echo "开始下载 $DOWNLOAD_COUNT 个视频，使用 $THREAD_COUNT 线程..."
+          echo "当前UTC日期: $DATE_UTC"
+          
+          # 设置环境变量来覆盖Python中的日期
+          export CURRENT_DATE="$DATE_UTC"
           python downloader.py -o "$DOWNLOAD_DIR" -t "$THREAD_COUNT" -n "$DOWNLOAD_COUNT" --date-subdir
           
           # 保存日期变量供后续步骤使用
@@ -89,3 +93,22 @@ jobs:
           generate_release_notes: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 提交下载内容到仓库
+        if: success()
+        run: |
+          # 配置Git
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          
+          # 添加下载的内容
+          git add ${{ env.DOWNLOAD_DIR }}/
+          
+          # 检查是否有更改
+          if git diff --cached --quiet; then
+            echo "没有新的内容需要提交"
+          else
+            # 提交更改
+            git commit -m "添加每日下载内容 - ${{ env.DATE_HYPHEN }}"
+            git push origin main
+          fi
