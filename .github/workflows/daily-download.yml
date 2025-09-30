@@ -77,11 +77,13 @@ jobs:
           
           # 调试查看环境变量
           echo "Debug: 读取的PREFIXED_DATE=${{ env.PREFIXED_DATE }}"
-          # 直接设置TAR_NAME，不依赖环境变量
+          # 打包视频文件 - 确保格式正确
           TAR_NAME="雅俗共赏-${{ env.DATE_HYPHEN }}.tar.gz"
           echo "正在打包为 $TAR_NAME..."
-          # 保存打包文件名
-          echo "TAR_NAME=$TAR_NAME" >> $GITHUB_ENV
+          # 强制设置完全相同的环境变量，确保没有解析问题
+          echo "TAR_NAME=雅俗共赏-${{ env.DATE_HYPHEN }}.tar.gz" >> $GITHUB_ENV
+          # 调试确认环境变量值
+          echo "最终设置的TAR_NAME=雅俗共赏-${{ env.DATE_HYPHEN }}.tar.gz"
           
           # 确保目录存在且正确打包
           if [ -d "$DOWNLOAD_DIR/雅俗共赏_${{ env.DATE_UTC }}" ]; then
@@ -111,7 +113,8 @@ jobs:
             - 日期: ${{ env.DATE_HYPHEN }} (UTC)
             - 数量: ${{ github.event.inputs.download_count || '10' }}
             - 线程: ${{ github.event.inputs.thread_count || '4' }}
-          files: "./${{ env.TAR_NAME }}"
+          # 直接使用固定格式而不是依赖环境变量
+          files: "./雅俗共赏-${{ env.DATE_HYPHEN }}.tar.gz"
           draft: false
           prerelease: false
           generate_release_notes: false
