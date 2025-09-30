@@ -59,7 +59,12 @@ python cleanUp.py -d 30 -p custom_downloads
 
 ## 安装要求
 
-确保您的系统已安装Python。本项目依赖Python标准库，无需安装额外的第三方库。
+确保您的系统已安装Python。
+
+依赖包安装：
+```bash
+pip install -r requirements.txt
+```
 
 ## GitHub Actions 工作流
 
