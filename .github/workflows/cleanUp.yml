@@ -1,0 +1,53 @@
+name: 清理历史数据
+
+on:
+  # 每天UTC时间00:00执行
+  schedule:
+    - cron: '0 0 * * *'
+  # 允许手动触发，并可以输入自定义参数
+  workflow_dispatch:
+    inputs:
+      days_to_keep:
+        description: '保留最近多少天的数据'
+        required: true
+        default: '7'
+        type: string
+      cleanup_path:
+        description: '要清理的数据目录'
+        required: true
+        default: 'downloads'
+        type: string
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      # 需要读取仓库内容的权限
+      contents: read
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v3
+        
+      - name: 设置Python环境
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          # 本脚本不需要额外依赖
+          
+      - name: 运行清理脚本
+        run: |
+          # 执行清理脚本，传入workflow参数
+          python cleanUp.py -d ${{ github.event.inputs.days_to_keep || 7 }} -p ${{ github.event.inputs.cleanup_path || 'downloads' }}
+          
+      - name: 输出清理结果
+        if: success()
+        run: echo "数据清理任务已成功完成"
+        
+      - name: 清理失败通知
+        if: failure()
+        run: echo "数据清理任务失败，请检查日志"

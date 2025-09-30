@@ -1,0 +1,91 @@
+name: 每日视频下载与发布
+
+on:
+  # 每日UTC时间执行
+  schedule:
+    - cron: '0 0 * * *'
+  # 允许手动触发
+  workflow_dispatch:
+    inputs:
+      download_count:
+        description: '下载数量'
+        required: false
+        default: '10'
+        type: string
+      thread_count:
+        description: '线程数量'
+        required: false
+        default: '4'
+        type: string
+
+# 设置权限
+permissions:
+  contents: write  # 需要写入权限来创建release和上传资产
+
+jobs:
+  download-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+      
+      - name: 设置Python环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          # 安装requests库
+          pip install requests
+      
+      - name: 下载视频
+        run: |
+          # 获取当前UTC日期
+          DATE_UTC=$(date -u +"%Y%m%d")
+          DATE_HYPHEN=$(date -u +"%Y-%m-%d")
+          
+          # 设置下载目录和参数
+          DOWNLOAD_DIR="downloads"
+          THREAD_COUNT=${{ github.event.inputs.thread_count || '4' }}
+          DOWNLOAD_COUNT=${{ github.event.inputs.download_count || '10' }}
+          
+          echo "开始下载 $DOWNLOAD_COUNT 个视频，使用 $THREAD_COUNT 线程..."
+          python downloader.py -o "$DOWNLOAD_DIR" -t "$THREAD_COUNT" -n "$DOWNLOAD_COUNT" --date-subdir
+          
+          # 保存日期变量供后续步骤使用
+          echo "DATE_UTC=$DATE_UTC" >> $GITHUB_ENV
+          echo "DATE_HYPHEN=$DATE_HYPHEN" >> $GITHUB_ENV
+          echo "DOWNLOAD_DIR=$DOWNLOAD_DIR" >> $GITHUB_ENV
+      
+      - name: 打包视频
+        run: |
+          # 进入下载目录
+          cd "$DOWNLOAD_DIR"
+          
+          # 打包视频文件
+          TAR_NAME="雅俗共赏-${{ env.DATE_HYPHEN }}.tar.gz"
+          echo "正在打包为 $TAR_NAME..."
+          tar -czf "../$TAR_NAME" "雅俗共赏_${{ env.DATE_UTC }}"
+          
+          # 保存打包文件名
+          echo "TAR_NAME=$TAR_NAME" >> $GITHUB_ENV
+      
+      - name: 创建GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "daily-${{ env.DATE_UTC }}"
+          name: "每日更新 - ${{ env.DATE_HYPHEN }}"
+          body: |
+            每日自动下载的视频集合
+            
+            - 日期: ${{ env.DATE_HYPHEN }} (UTC)
+            - 数量: ${{ github.event.inputs.download_count || '10' }}
+            - 线程: ${{ github.event.inputs.thread_count || '4' }}
+          files: "${{ env.TAR_NAME }}"
+          draft: false
+          prerelease: false
+          generate_release_notes: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
