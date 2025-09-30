@@ -65,13 +65,26 @@ jobs:
       
       - name: 打包视频
         run: |
-          # 进入下载目录
-          cd "$DOWNLOAD_DIR"
+          # 检查下载目录结构
+          echo "下载目录结构:"
+          ls -la "$DOWNLOAD_DIR"
           
           # 打包视频文件
           TAR_NAME="雅俗共赏-${{ env.DATE_HYPHEN }}.tar.gz"
           echo "正在打包为 $TAR_NAME..."
-          tar -czf "../$TAR_NAME" "雅俗共赏_${{ env.DATE_UTC }}"
+          
+          # 确保目录存在且正确打包
+          if [ -d "$DOWNLOAD_DIR/雅俗共赏_${{ env.DATE_UTC }}" ]; then
+            tar -czf "$TAR_NAME" -C "$DOWNLOAD_DIR" "雅俗共赏_${{ env.DATE_UTC }}"
+            echo "成功打包目录"
+          else
+            echo "警告: 目录不存在，检查下载是否成功"
+            # 如果没有特定目录，则尝试打包整个下载目录
+            tar -czf "$TAR_NAME" "$DOWNLOAD_DIR"
+          fi
+          
+          # 显示创建的文件
+          ls -la "$TAR_NAME"
           
           # 保存打包文件名
           echo "TAR_NAME=$TAR_NAME" >> $GITHUB_ENV
@@ -87,7 +100,7 @@ jobs:
             - 日期: ${{ env.DATE_HYPHEN }} (UTC)
             - 数量: ${{ github.event.inputs.download_count || '10' }}
             - 线程: ${{ github.event.inputs.thread_count || '4' }}
-          files: "${{ env.TAR_NAME }}"
+          files: "./${{ env.TAR_NAME }}"
           draft: false
           prerelease: false
           generate_release_notes: false
