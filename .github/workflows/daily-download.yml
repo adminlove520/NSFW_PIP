@@ -62,6 +62,9 @@ jobs:
           echo "DATE_UTC=$DATE_UTC" >> $GITHUB_ENV
           echo "DATE_HYPHEN=$DATE_HYPHEN" >> $GITHUB_ENV
           echo "DOWNLOAD_DIR=$DOWNLOAD_DIR" >> $GITHUB_ENV
+          # 设置带前缀的日期格式
+          echo "PREFIXED_DATE=雅俗共赏-$DATE_HYPHEN" >> $GITHUB_ENV
+          echo "PREFIXED_DATE_UTC=雅俗共赏-$DATE_UTC" >> $GITHUB_ENV
       
       - name: 打包视频
         run: |
@@ -70,7 +73,7 @@ jobs:
           ls -la "$DOWNLOAD_DIR"
           
           # 打包视频文件
-          TAR_NAME="雅俗共赏-${{ env.DATE_HYPHEN }}.tar.gz"
+          TAR_NAME="${{ env.PREFIXED_DATE }}.tar.gz"
           echo "正在打包为 $TAR_NAME..."
           
           # 确保目录存在且正确打包
@@ -88,12 +91,13 @@ jobs:
           
           # 保存打包文件名
           echo "TAR_NAME=$TAR_NAME" >> $GITHUB_ENV
+          echo "TAG_NAME=${{ env.PREFIXED_DATE_UTC }}" >> $GITHUB_ENV
       
       - name: 创建GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: "daily-${{ env.DATE_UTC }}"
-          name: "每日更新 - ${{ env.DATE_HYPHEN }}"
+          tag_name: "${{ env.TAG_NAME }}"
+          name: "${{ env.PREFIXED_DATE }}"
           body: |
             每日自动下载的视频集合
             
