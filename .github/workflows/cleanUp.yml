@@ -37,7 +37,8 @@ jobs:
       - name: 安装依赖
         run: |
           python -m pip install --upgrade pip
-          # 本脚本不需要额外依赖
+          # 从requirements.txt安装依赖
+          pip install -r requirements.txt
           
       - name: 运行清理脚本
         run: |
