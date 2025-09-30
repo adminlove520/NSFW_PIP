@@ -5,7 +5,10 @@ import time
 import hashlib
 import json
 from urllib.parse import urlparse
-from datetime import datetime
+from datetime import datetime, timezone
+
+# 定义UTC常量以兼容Python 3.10
+UTC = timezone.utc
 import signal
 import sys
 import argparse
@@ -484,7 +487,6 @@ def main():
     # 处理日期子目录
     output_dir = args.output
     if args.date_subdir:
-        from datetime import datetime, UTC
         date_str = datetime.now(UTC).strftime("%Y%m%d")
         output_dir = os.path.join(output_dir, f"雅俗共赏_{date_str}")
     
